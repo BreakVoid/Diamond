@@ -4,7 +4,6 @@
 #define DIAMOND_MATRIX_HPP
 
 #include <iostream>
-
 #include <vector>
 
 namespace Diamond {
@@ -162,6 +161,16 @@ std::ostream & operator<<(std::ostream &stream, const Matrix<_Td> &mat)
 		stream << '\n';
 	}
 	return stream;
+}
+
+template<typename _Td>
+Matrix<_Td> I(const size_t &n)
+{
+	Matrix<_Td> res(n, n, 0);
+	for (size_t i = 0; i < n; ++i) {
+		res[i][i] = static_cast<_Td>(1);
+	}
+	return res;
 }
 
 }

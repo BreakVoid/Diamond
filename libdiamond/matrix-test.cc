@@ -1,5 +1,6 @@
 #include "matrix.hpp"
 #include "vector.hpp"
+#include "qr-decom-double.hpp"
 #include <iostream>
 
 using namespace std;
@@ -7,21 +8,14 @@ using namespace Diamond;
 
 int main()
 {
-	Diamond::Matrix<double> A(3, 3, 0);
-	A[0][0] = A[1][1] = A[2][2] = 5;
+	Matrix<double> A(3, 3, 1);
+	A[0][2] = 0;
+	A[2][0] = 0;
+	auto qrRes = QR_double::QR_DecompositionPivoting(A);
+	cout << qrRes.first.first << endl;
+	cout << qrRes.first.second << endl;
+
 	cout << A << endl;
-	Diamond::Matrix<double> B(3, 3, 0);
-	cout << B << endl;
-	Diamond::Matrix<double> C = (A + B) / 5;
-	cout << C << endl;
-	Diamond::Vector<double> v(3);
-	v[0] = 1;
-	v[1] = 2;
-	v[2] = 3;
-	cout << v << endl;
-	cout << A * v << endl;
-	cout << Transpose(v) * v << endl;
-	cout << v * Transpose(v) << endl;
-	cout << 100.0 * Transpose(v) << endl;
-	cout << 100.0 * v << endl;
+	
+	cout << qrRes.first.first * qrRes.first.second * Transpose(qrRes.second) << endl;
 }

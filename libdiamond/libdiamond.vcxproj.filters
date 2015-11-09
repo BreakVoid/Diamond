@@ -18,12 +18,18 @@
     <ClCompile Include="matrix-test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="qr-decom-double.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="matrix.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qr-decom-double.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

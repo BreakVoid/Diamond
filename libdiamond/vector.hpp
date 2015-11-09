@@ -13,7 +13,7 @@ public:
 	Vector(const size_t &_n_rows)
 		: Matrix(_n_rows, 1) {}
 	Vector(const size_t &_n_rows, const _Td &fillValue)
-		: Matrix(_n_rows, 1, std::vector<std::vector<_Td>>(n_rows, std::std::vector<_Td>(n_cols, fillValue))) {}
+		: Matrix(_n_rows, 1, fillValue) {}
 	inline const size_t & Size() const
 	{
 		return Matrix::RowSize();
@@ -35,7 +35,7 @@ public:
 	VectorT(const size_t &_n_cols)
 		: Matrix(1, _n_cols) {}
 	VectorT(const size_t &_n_rows, const _Td &fillValue)
-		: Matrix(1, _n_cols, std::vector<std::vector<_Td>>(n_rows, std::std::vector<_Td>(n_cols, fillValue))) {}
+		: Matrix(1, _n_cols, fillValue) {}
 	inline const size_t & Size() const
 	{
 		return Matrix::ColSize();
