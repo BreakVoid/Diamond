@@ -4,6 +4,7 @@
 #define DIAMOND_MATRIX_HPP
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
 
 namespace Diamond {
@@ -153,13 +154,19 @@ Matrix<_Td> Transpose(const Matrix<_Td> &a)
 template<typename _Td>
 std::ostream & operator<<(std::ostream &stream, const Matrix<_Td> &mat)
 {
+	std::ostream::fmtflags oldFlags = stream.flags();
+	stream.precision(8);
+	stream.setf(std::ios::fixed | std::ios::right);
+
 	stream << '\n';
 	for (size_t i = 0; i < mat.RowSize(); ++i) {
 		for (size_t j = 0; j < mat.ColSize(); ++j) {
-			stream << '\t' << mat[i][j];
+			stream << setw(15) << mat[i][j];
 		}
 		stream << '\n';
 	}
+
+	stream.flags(oldFlags);
 	return stream;
 }
 
