@@ -1,49 +1,45 @@
-#include "qr-decom-double.hpp"
-#include <map>
-#include <cmath>
-#include <iostream>
+#pragma once
+#ifndef DIAMOND_QR_DECOMPOSITION_HPP
+#define DIAMOND_QR_DECOMPOSITION_HPP
+
+#include "matrix.hpp"
+#include "vector.hpp"
+#include "util.hpp"
 
 namespace Diamond {
-namespace QR_double {
+namespace QR {
 
-extern const double EPS = 1e-9;
+int Sgn(const double &x);
+int Sgn(const long double &x);
 
-int sgn(const double &x)
+template<typename _Td>
+std::pair<Matrix<_Td>, Matrix<_Td>> QR_Decomposition(const Matrix<_Td> &a)
 {
-	if (x < -EPS) {
-		return -1;
-	} else {
-		return 1;
-	}
-}
-
-std::pair<Matrix<double>, Matrix<double>> QR_Decomposition(const Matrix<double> &a)
-{
-	Matrix<double> q(a.RowSize(), a.RowSize());
-	Matrix<double> r(a);
+	Matrix<_Td> q(a.RowSize(), a.RowSize());
+	Matrix<_Td> r(a);
 	for (size_t i = 0; i < q.RowSize(); ++i) {
 		q[i][i] = 1;
 	}
 	for (size_t k = 0; k < r.ColSize(); ++k) {
-		double alpha = 0.0;
+		_Td alpha = 0.0;
 		for (size_t i = k; i < r.RowSize(); ++i) {
 			alpha += r[i][k] * r[i][k];
 		}
-		alpha = -sgn(r[k][k]) * sqrt(alpha);
-		Vector<double> v(r.RowSize(), 0);
+		alpha = -Sgn(r[k][k]) * sqrt(alpha);
+		Vector<_Td> v(r.RowSize(), 0);
 		for (size_t i = k; i < r.RowSize(); ++i) {
 			v[i] = r[i][k];
 		}
 		v[k] -= alpha;
-		double beta = 0;
+		_Td beta = 0;
 		for (size_t i = 0; i < r.RowSize(); ++i) {
 			beta += v[i] * v[i];
 		}
-		if (-EPS < beta && beta < EPS) {
+		if (EqualZero(beta)) {
 			continue;
 		}
 		for (size_t j = k; j < r.ColSize(); ++j) {
-			double gama = 0;
+			_Td gama = 0;
 			for (size_t i = 0; i < r.RowSize(); ++i) {
 				gama += v[i] * r[i][j];
 			}
@@ -52,7 +48,7 @@ std::pair<Matrix<double>, Matrix<double>> QR_Decomposition(const Matrix<double> 
 			}
 		}
 		for (size_t j = 0; j < r.RowSize(); ++j) {
-			double lambda = 0;
+			_Td lambda = 0;
 			for (size_t i = 0; i < r.RowSize(); ++i) {
 				lambda += v[i] * q[j][i];
 			}
@@ -64,29 +60,30 @@ std::pair<Matrix<double>, Matrix<double>> QR_Decomposition(const Matrix<double> 
 	return std::make_pair(q, r);
 }
 
-std::pair<std::pair<Matrix<double>, Matrix<double>>, Matrix<double>> QR_DecompositionPivoting(const Matrix<double> &a)
+template<typename _Td>
+std::pair<std::pair<Matrix<_Td>, Matrix<_Td>>, Matrix<_Td>> QR_DecompositionPivoting(const Matrix<_Td> &a)
 {
 	std::vector<size_t> P(a.ColSize());
 	for (size_t i = 0; i < a.ColSize(); ++i) {
 		P[i] = i;
 	}
-	Matrix<double> q(I<double>(a.ColSize())), r(a);
+	Matrix<_Td> q(I<_Td>(a.ColSize())), r(a);
 	for (size_t k = 0; k < r.ColSize(); ++k) {
 		//----------Pivoting---------------
 		size_t pivotCol = k;
-		double pivotBeta = 0.0;
+		_Td pivotBeta = 0.0;
 		for (size_t c = k; c < r.ColSize(); ++c) {
-			double alpha = 0.0;
+			_Td alpha = 0.0;
 			for (size_t i = k; i < r.RowSize(); ++i) {
 				alpha += r[i][c];
 			}
-			alpha = -sgn(r[k][c]) * sqrt(alpha);
-			Vector<double> v(r.RowSize(), 0);
+			alpha = -Sgn(r[k][c]) * sqrt(alpha);
+			Vector<_Td> v(r.RowSize(), 0);
 			for (size_t i = k; i < r.RowSize(); ++i) {
 				v[i] = r[i][c];
 			}
 			v[k] -= alpha;
-			double beta = 0.0;
+			_Td beta = 0.0;
 			for (size_t i = 0; i < r.RowSize(); ++i) {
 				beta += v[i] * v[i];
 			}
@@ -102,25 +99,25 @@ std::pair<std::pair<Matrix<double>, Matrix<double>>, Matrix<double>> QR_Decompos
 			std::swap(P[k], P[pivotCol]);
 		}
 		//----------Pivoting End-------------
-		double alpha = 0.0;
+		_Td alpha = 0.0;
 		for (size_t i = k; i < r.RowSize(); ++i) {
 			alpha += r[i][k] * r[i][k];
 		}
-		alpha = -sgn(r[k][k]) * sqrt(alpha);
-		Vector<double> v(r.RowSize(), 0);
+		alpha = -Sgn(r[k][k]) * sqrt(alpha);
+		Vector<_Td> v(r.RowSize(), 0);
 		for (size_t i = k; i < r.RowSize(); ++i) {
 			v[i] = r[i][k];
 		}
 		v[k] -= alpha;
-		double beta = 0;
+		_Td beta = 0;
 		for (size_t i = 0; i < r.RowSize(); ++i) {
 			beta += v[i] * v[i];
 		}
-		if (-EPS < beta && beta < EPS) {
+		if (EqualZero(beta)) {
 			continue;
 		}
 		for (size_t j = k; j < r.ColSize(); ++j) {
-			double gama = 0;
+			_Td gama = 0;
 			for (size_t i = 0; i < r.RowSize(); ++i) {
 				gama += v[i] * r[i][j];
 			}
@@ -129,7 +126,7 @@ std::pair<std::pair<Matrix<double>, Matrix<double>>, Matrix<double>> QR_Decompos
 			}
 		}
 		for (size_t j = 0; j < r.RowSize(); ++j) {
-			double lambda = 0;
+			_Td lambda = 0;
 			for (size_t i = 0; i < r.RowSize(); ++i) {
 				lambda += v[i] * q[j][i];
 			}
@@ -138,12 +135,13 @@ std::pair<std::pair<Matrix<double>, Matrix<double>>, Matrix<double>> QR_Decompos
 			}
 		}
 	}
-	Matrix<double> p(r.ColSize(), r.ColSize());
+	Matrix<_Td> p(r.ColSize(), r.ColSize());
 	for (size_t i = 0; i < r.ColSize(); ++i) {
-		p[P[i]][i] = 1;
+		p[P[i]][i] = static_cast<_Td>(1);
 	}
 	return std::make_pair(std::make_pair(q, r), p);
 }
 
 }
 }
+#endif

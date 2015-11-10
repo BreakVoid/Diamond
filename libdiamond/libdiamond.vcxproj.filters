@@ -18,7 +18,10 @@
     <ClCompile Include="matrix-test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qr-decom-double.cc">
+    <ClCompile Include="util.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qr-decom.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +32,10 @@
     <ClInclude Include="vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="qr-decom-double.hpp">
+    <ClInclude Include="util.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="qr-decom.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

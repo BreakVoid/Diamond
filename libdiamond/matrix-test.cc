@@ -1,6 +1,6 @@
 #include "matrix.hpp"
 #include "vector.hpp"
-#include "qr-decom-double.hpp"
+#include "qr-decom.hpp"
 #include <iostream>
 
 using namespace std;
@@ -24,9 +24,9 @@ int main()
 	std::vector<std::pair<std::pair<Matrix<double>, Matrix<double>>, Matrix<double>>> qrRes;
 	std::vector<Matrix<double>> arrA;
 	arrA.push_back(A);
-	qrRes.push_back(QR_double::QR_DecompositionPivoting(A));
-	for (int i = 1; i <= 10; ++i) {
-		qrRes.push_back(QR_double::QR_DecompositionPivoting(arrA[i - 1]));
+	qrRes.push_back(QR::QR_DecompositionPivoting(A));
+	for (int i = 1; i <= 100; ++i) {
+		qrRes.push_back(QR::QR_DecompositionPivoting(arrA[i - 1]));
 		arrA.push_back(qrRes[i].first.second * (Transpose(qrRes[i].second) * qrRes[i].first.first));
 		cout << arrA.back() << endl;
 	}

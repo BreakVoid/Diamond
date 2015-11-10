@@ -69,7 +69,7 @@ template<typename _Td>
 Matrix<_Td> operator+(const Matrix<_Td> &a, const Matrix<_Td> &b)
 {
 	if (a.RowSize() != b.RowSize() || a.ColSize() != b.ColSize()) {
-		throw std::exception("Two matrics cannot be added together.");
+		throw std::invalid_argument("Two matrics cannot be added together.");
 	}
 	Matrix<_Td> c(a.RowSize(), a.ColSize());
 	for (size_t i = 0; i < a.RowSize(); ++i) {
@@ -87,7 +87,7 @@ template<typename _Td>
 Matrix<_Td> operator*(const Matrix<_Td> &a, const Matrix<_Td> &b)
 {
 	if (a.ColSize() != b.RowSize()) {
-		throw std::exception("Two matrics cannot be multiplied together.");
+		throw std::invalid_argument("Two matrics cannot be multiplied together.");
 	}
 	Matrix<_Td> c(a.RowSize(), b.ColSize(), 0);
 	for (size_t i = 0; i < a.RowSize(); ++i) {

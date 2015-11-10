@@ -143,12 +143,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="matrix.hpp" />
-    <ClInclude Include="qr-decom-double.hpp" />
+    <ClInclude Include="qr-decom.hpp" />
+    <ClInclude Include="util.hpp" />
     <ClInclude Include="vector.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="matrix-test.cc" />
-    <ClCompile Include="qr-decom-double.cc" />
+    <ClCompile Include="qr-decom.cc" />
+    <ClCompile Include="util.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
