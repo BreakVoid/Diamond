@@ -122,7 +122,7 @@ template<typename _Td>
 Vector<_Td> operator+(const Vector<_Td> v1, const Vector<_Td> v2)
 {
 	if (v1.Size() != v2.Size()) {
-		throw std::invalid_argument(""different vector size."");
+		throw std::invalid_argument("different vector size.");
 	}
 	Vector<_Td> res(v1.Size());
 	for (size_t i = 0; i < v1.Size(); ++i) {
@@ -135,7 +135,7 @@ template<typename _Td>
 Vector<_Td> operator-(const Vector<_Td> v1, const Vector<_Td> v2)
 {
 	if (v1.Size() != v2.Size()) {
-		throw std::invalid_argument(""different vector size."");
+		throw std::invalid_argument("different vector size.");
 	}
 	Vector<_Td> res(v1.Size());
 	for (size_t i = 0; i < v1.Size(); ++i) {

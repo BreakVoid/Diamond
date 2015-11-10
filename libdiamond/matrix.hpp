@@ -43,6 +43,20 @@ public:
 		: n_rows(mat.n_rows), n_cols(mat.n_cols), data(mat.data) {}
 	Matrix(Matrix<_Td> &&mat) noexcept
 		: n_rows(mat.n_rows), n_cols(mat.n_cols), data(mat.data) {}
+	Matrix<_Td> & operator=(const Matrix<_Td> &rhs)
+	{
+		this->n_rows = rhs.n_rows;
+		this->n_cols = rhs.n_cols;
+		this->data = rhs.data;
+		return *this;
+	}
+	Matrix<_Td> & operator=(Matrix<_Td> &&rhs)
+	{
+		this->n_rows = rhs.n_rows;
+		this->n_cols = rhs.n_cols;
+		this->data = rhs.data;
+		return *this;
+	}
 	inline const size_t & RowSize() const
 	{
 		return n_rows;
@@ -69,12 +83,27 @@ template<typename _Td>
 Matrix<_Td> operator+(const Matrix<_Td> &a, const Matrix<_Td> &b)
 {
 	if (a.RowSize() != b.RowSize() || a.ColSize() != b.ColSize()) {
-		throw std::invalid_argument("Two matrics cannot be added together.");
+		throw std::invalid_argument("different matrics\'s sizes");
 	}
 	Matrix<_Td> c(a.RowSize(), a.ColSize());
 	for (size_t i = 0; i < a.RowSize(); ++i) {
 		for (size_t j = 0; j < a.ColSize(); ++j) {
 			c[i][j] = a[i][j] + b[i][j];
+		}
+	}
+	return c;
+}
+
+template<typename _Td>
+Matrix<_Td> operator-(const Matrix<_Td> &a, const Matrix<_Td> &b)
+{
+	if (a.RowSize() != b.RowSize() || a.ColSize() != b.ColSize()) {
+		throw std::invalid_argument("different matrics\'s sizes");
+	}
+	Matrix<_Td> c(a.RowSize(), a.ColSize());
+	for (size_t i = 0; i < a.RowSize(); ++i) {
+		for (size_t j = 0; j < a.ColSize(); ++j) {
+			c[i][j] = a[i][j] - b[i][j];
 		}
 	}
 	return c;
@@ -87,7 +116,7 @@ template<typename _Td>
 Matrix<_Td> operator*(const Matrix<_Td> &a, const Matrix<_Td> &b)
 {
 	if (a.ColSize() != b.RowSize()) {
-		throw std::invalid_argument("Two matrics cannot be multiplied together.");
+		throw std::invalid_argument("different matrics\'s sizes");
 	}
 	Matrix<_Td> c(a.RowSize(), b.ColSize(), 0);
 	for (size_t i = 0; i < a.RowSize(); ++i) {
@@ -161,7 +190,7 @@ std::ostream & operator<<(std::ostream &stream, const Matrix<_Td> &mat)
 	stream << '\n';
 	for (size_t i = 0; i < mat.RowSize(); ++i) {
 		for (size_t j = 0; j < mat.ColSize(); ++j) {
-			stream << setw(15) << mat[i][j];
+			stream << std::setw(15) << mat[i][j];
 		}
 		stream << '\n';
 	}
