@@ -2,12 +2,16 @@
 #ifndef DIAMOND_UTIL_HPP
 #define DIAMOND_UTIL_HPP
 
+#include "matrix.hpp"
 #include <complex>
+#include <random>
+#include <ctime>
 
 namespace Diamond {
 
 extern const double EPS_DOUBLE;
 extern const long double EPS_LONG_DOUBLE;
+extern std::default_random_engine engine;
 
 bool EqualZero(const double &x);
 bool EqualZero(const long double &x);
@@ -17,6 +21,45 @@ bool EqualZero(const std::complex<_Td> &x)
 {
 	return EqualZero(x.real()) && EqualZero(x.imag());
 }
+
+template<typename _Td>
+Vector<_Td> GenerateRandomVector(const size_t &n, const _Td &minValue = static_cast<_Td>(0), const _Td &maxValue = static_cast<_Td>(1))
+{
+	Vector<_Td> res(n);
+	std::uniform_real_distribution<_Td> random(minValue, maxValue);
+	for (size_t i = 0; i < n; ++i) {
+		res[i] = random(engine);
+	}
+	return res;
+}
+
+template<typename _Td>
+Matrix<_Td> GenerateRandomMatrix(const size_t &n, const size_t &m, const _Td &minValue = static_cast<_Td>(0), const _Td &maxValue = static_cast<_Td>(1))
+{
+	Matrix<_Td> res(n, m);
+	std::uniform_real_distribution<_Td> random(minValue, maxValue);
+	for (size_t i = 0; i < n; ++i) {
+		for (size_t j = 0; j < m; ++j) {
+			res[i][j] = random(engine);
+		}
+	}
+	return res;
+}
+
+template<typename _Td>
+Matrix<_Td> GenerateRandomSymmetricMatrix(const size_t &n, const _Td &minValue = static_cast<_Td>(0), const _Td &maxValue = static_cast<_Td>(1))
+{
+	Matrix<_Td> res(n, m);
+	std::uniform_real_distribution<_Td> random(minValue, maxValue);
+	for (size_t i = 0; i < n; ++i) {
+		res[i][i] = random(engine);
+		for (size_t j = i + 1; j < n; ++j) {
+			res[i][j] = res[j][i] = random(engine);
+		}
+	}
+	return res;
+}
+
 
 }
 
