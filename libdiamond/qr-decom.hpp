@@ -9,8 +9,15 @@
 namespace Diamond {
 namespace QR {
 
-int Sgn(const double &x);
-int Sgn(const long double &x);
+inline int Sgn(const double &x)
+{
+	return x < -EPS_DOUBLE ? -1 : 1;
+}
+
+inline int Sgn(const long double &x)
+{
+	return x < -EPS_LONG_DOUBLE ? -1 : 1;
+}
 
 template<typename _Td>
 std::pair<Matrix<_Td>, Matrix<_Td>> QR_Decomposition(const Matrix<_Td> &a)

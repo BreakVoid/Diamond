@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <stdexcept>
 
 namespace Diamond {
 
@@ -149,7 +150,7 @@ Matrix<_Td> operator*(const _Td &b, const Matrix<_Td> &a)
 {
 	Matrix<_Td> c(a.RowSize(), a.ColSize());
 	for (size_t i = 0; i < a.RowSize(); ++i) {
-		for (size_t j = 0; j < ColSize(); ++j) {
+		for (size_t j = 0; j < a.ColSize(); ++j) {
 			c[i][j] = a[i][j] * b;
 		}
 	}

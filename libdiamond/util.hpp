@@ -3,18 +3,26 @@
 #define DIAMOND_UTIL_HPP
 
 #include "matrix.hpp"
+#include "vector.hpp"
 #include <complex>
 #include <random>
 #include <ctime>
 
 namespace Diamond {
 
-extern const double EPS_DOUBLE;
-extern const long double EPS_LONG_DOUBLE;
-extern std::default_random_engine engine;
+static const double EPS_DOUBLE = 1e-8;
+static const long double EPS_LONG_DOUBLE = 1e-10;
+static std::default_random_engine engine;
 
-bool EqualZero(const double &x);
-bool EqualZero(const long double &x);
+inline bool EqualZero(const double &x)
+{
+	return -EPS_DOUBLE < x && x < EPS_DOUBLE;
+}
+
+inline bool EqualZero(const long double &x)
+{
+	return -EPS_LONG_DOUBLE < x && x < EPS_LONG_DOUBLE;
+}
 
 template<typename _Td>
 bool EqualZero(const std::complex<_Td> &x)
@@ -49,7 +57,7 @@ Matrix<_Td> GenerateRandomMatrix(const size_t &n, const size_t &m, const _Td &mi
 template<typename _Td>
 Matrix<_Td> GenerateRandomSymmetricMatrix(const size_t &n, const _Td &minValue = static_cast<_Td>(0), const _Td &maxValue = static_cast<_Td>(1))
 {
-	Matrix<_Td> res(n, m);
+	Matrix<_Td> res(n, n);
 	std::uniform_real_distribution<_Td> random(minValue, maxValue);
 	for (size_t i = 0; i < n; ++i) {
 		res[i][i] = random(engine);

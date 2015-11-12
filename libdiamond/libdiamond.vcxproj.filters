@@ -18,12 +18,6 @@
     <ClCompile Include="matrix-test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="util.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qr-decom.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="matrix.hpp">
