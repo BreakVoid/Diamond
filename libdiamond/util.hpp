@@ -12,7 +12,7 @@ namespace Diamond {
 
 static const double EPS_DOUBLE = 1e-8;
 static const long double EPS_LONG_DOUBLE = 1e-10;
-static std::default_random_engine engine;
+static std::default_random_engine engine(time(NULL));
 
 inline bool EqualZero(const double &x)
 {

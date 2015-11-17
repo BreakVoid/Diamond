@@ -8,15 +8,15 @@ using namespace Diamond;
 
 int main()
 {
-	Matrix<double> A(GenerateRandomMatrix<double>(4, 4, -10, 10));
-
-	std::vector<std::pair<Matrix<double>, Matrix<double>>> qrRes;
+	Matrix<double> A(GenerateRandomSymmetricMatrix<double>(4, -10, 10));
+	std::vector<std::pair<std::pair<Matrix<double>, Matrix<double>>, Matrix<double>>> qrRes;
 	std::vector<Matrix<double>> arrA;
 	arrA.push_back(A);
-	qrRes.push_back(QR::QR_Decomposition(A));
+	cout << A << endl;
+	qrRes.push_back(QR::QR_DecompositionPivoting(A));
 	for (int i = 1; i <= 1000; ++i) {
-		qrRes.push_back(QR::QR_Decomposition(arrA[i - 1]));
-		arrA.push_back(qrRes[i].second * qrRes[i].first);
-		cout << arrA.back() << endl;
+		qrRes.push_back(QR::QR_DecompositionPivoting(arrA[i - 1]));
+		arrA.push_back(qrRes[i].first.second * Transpose(qrRes[i].second) * qrRes[i].first.first);
 	}
+	cout << arrA.back() << endl;
 }
