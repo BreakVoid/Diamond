@@ -32,5 +32,8 @@
     <ClInclude Include="qr-decom.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="lu-decom.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
