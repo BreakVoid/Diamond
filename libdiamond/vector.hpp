@@ -200,7 +200,6 @@ VectorT<_Td> operator-(const VectorT<_Td> v1, const VectorT<_Td> v2)
 	return res;
 }
 
-
 template<typename _Td>
 Matrix<_Td> operator*(const Vector<_Td> &v, const VectorT<_Td> &vT)
 {

@@ -72,9 +72,9 @@ std::pair<std::pair<Matrix<_Td>, Matrix<_Td>>, Matrix<_Td>> LU_DecompositionPivo
 			}
 		}
 		if (maxColumn != k) {
-			swap(p[k], p[maxColumn]);
+			std::swap(p[k], p[maxColumn]);
 			for (size_t i = 0; i < n; ++i) {
-				swap(beta[i][k], beta[i][maxColumn]);
+				std::swap(beta[i][k], beta[i][maxColumn]);
 			}
 		}
 		if (EqualZero(beta[k][k])) {
