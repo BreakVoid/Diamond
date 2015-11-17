@@ -9,15 +9,11 @@ using namespace Diamond;
 
 int main()
 {
-	Matrix<double> A(GenerateRandomMatrix<double>(4, 4, -10, 10));
-	cout << A << endl;
-	auto luRes = LU::LU_Decomposition(A);
-	cout << "L = " << luRes.first << endl;
-	cout << "U = " << luRes.second << endl;
-	cout << "L * U = " << luRes.first * luRes.second << endl;
-	auto luPRes = LU::LU_DecompositionPivoting(A);
-	cout << "L = " << luPRes.first.first << endl;
-	cout << "U = " << luPRes.first.second << endl;
-	cout << "P = " << luPRes.second << endl;
-	cout << "LUP' = " << luPRes.first.first * luPRes.first.second * Transpose(luPRes.second) << endl;
+	Matrix<double> a(2, 2);
+	a[0][0] = 1; a[0][1] = 2;
+	a[1][0] = -1.67; a[1][1] = 11.3;
+	Vector<double> b(2);
+	b[0] = 0; b[1] = -4.72;
+	const auto s = LU::SolveLinearEquationSystem(a, b);
+	cout << "Solution :" << s << endl;
 }

@@ -101,6 +101,58 @@ std::pair<std::pair<Matrix<_Td>, Matrix<_Td>>, Matrix<_Td>> LU_DecompositionPivo
 	return std::make_pair(std::make_pair(alpha, beta), P);
 }
 
+template<typename _Td>
+Vector<_Td> SolveLowerTriangleSystem(const Matrix<_Td> &a, const Vector<_Td> &b)
+{
+	if (a.RowSize() != a.ColSize()) {
+		throw std::invalid_argument("Cannot solve a no-square system.");
+	}
+	if (a.RowSize() != b.Size()) {
+		throw std::invalid_argument("The size of matrix and vector is not matched.");
+	}
+	const auto n = a.RowSize();
+	Vector<_Td> res(n);
+	for (size_t i = 0; i < n; ++i) {
+		_Td sum = static_cast<_Td>(0);
+		for (size_t j = 0; j < i; ++j) {
+			sum += a[i][j] * res[j];
+		}
+		res[i] = (b[i] - sum) / a[i][i];
+	}
+	return res;
+}
+
+template<typename _Td>
+Vector<_Td> SolveUpperTriangleSystem(const Matrix<_Td> &a, const Vector<_Td> &b)
+{
+	if (a.RowSize() != a.ColSize()) {
+		throw std::invalid_argument("Cannot solve a no-square system.");
+	}
+	if (a.RowSize() != b.Size()) {
+		throw std::invalid_argument("The size of matrix and vector is not matched.");
+	}
+	const auto n = a.RowSize();
+	Vector<_Td> res(n);
+	for (int i = n - 1; i >= 0; --i) {
+		_Td sum = 0;
+		for (int j = n - 1; j > i; --j) {
+			sum += a[i][j] * res[j];
+		}
+		res[i] = (b[i] - sum) / a[i][i];
+	}
+	return res;
+}
+
+template<typename _Td>
+Vector<_Td> SolveLinearEquationSystem(const Matrix<_Td> &a, const Vector<_Td> &b)
+{
+	const auto luRes = LU_DecompositionPivoting(a);
+	const auto y = SolveLowerTriangleSystem(luRes.first.first, b);
+	const auto x = SolveUpperTriangleSystem(luRes.first.second, y);
+	return Transpose(luRes.second) * x;
+}
+
+
 }
 }
 
