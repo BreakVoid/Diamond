@@ -10,6 +10,11 @@
 namespace Diamond {
 namespace LU {
 
+/**
+ * LU decomposition without column pivoting
+ * Input: a square matrix A
+ * Return: <L, U> which satisfies A = L * U
+ */
 template<typename _Td>
 std::pair<Matrix<_Td>, Matrix<_Td>> LU_Decomposition(const Matrix<_Td> &a)
 {
@@ -40,6 +45,12 @@ std::pair<Matrix<_Td>, Matrix<_Td>> LU_Decomposition(const Matrix<_Td> &a)
 	return std::make_pair(alpha, beta);
 }
 
+
+/**
+ * LU decomposition without column pivoting
+ * Input: a square matrix A
+ * Return: <<L, U>, P> which satisfies A = L * U * P' where P' is the transpose of P.
+ */
 template<typename _Td>
 std::pair<std::pair<Matrix<_Td>, Matrix<_Td>>, Matrix<_Td>> LU_DecompositionPivoting(const Matrix<_Td> &a)
 {

@@ -19,6 +19,11 @@ inline int Sgn(const long double &x)
 	return x < -EPS_LONG_DOUBLE ? -1 : 1;
 }
 
+/**
+ * QR Decomposition without column pivoting
+ * Input: matrix A
+ * Return a std::pair of <Q, R> which satisfies A = Q * R
+ */
 template<typename _Td>
 std::pair<Matrix<_Td>, Matrix<_Td>> QR_Decomposition(const Matrix<_Td> &a)
 {
@@ -67,6 +72,11 @@ std::pair<Matrix<_Td>, Matrix<_Td>> QR_Decomposition(const Matrix<_Td> &a)
 	return std::make_pair(q, r);
 }
 
+/**
+ * QR Decomposition with column pivoting
+ * Input: a matrix A
+ * Return <<Q, R>, P> which satisfies A = Q * R * P' where P' is the transpose of P.
+ */
 template<typename _Td>
 std::pair<std::pair<Matrix<_Td>, Matrix<_Td>>, Matrix<_Td>> QR_DecompositionPivoting(const Matrix<_Td> &a)
 {
