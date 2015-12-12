@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="lu-decom.hpp" />
     <ClInclude Include="matrix.hpp" />
+    <ClInclude Include="optimization.hpp" />
     <ClInclude Include="qr-decom.hpp" />
     <ClInclude Include="util.hpp" />
     <ClInclude Include="vector.hpp" />

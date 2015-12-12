@@ -110,6 +110,29 @@ Matrix<_Td> operator-(const Matrix<_Td> &a, const Matrix<_Td> &b)
 	return c;
 }
 
+template<typename _Td>
+Matrix<_Td> operator-(const Matrix<_Td> &mat)
+{
+	Matrix<_Td> result(mat.RowSize(), mat.ColSize());
+	for (size_t i = 0; i < mat.RowSize(); ++i) {
+		for (size_t j = 0; j < mat.ColSize(); ++j) {
+			result[i][j] = -mat[i][j];
+		}
+	}
+	return result;
+}
+
+template<typename _Td>
+Matrix<_Td> operator-(Matrix<_Td> &&mat)
+{
+	for (size_t i = 0; i < mat.RowSize(); ++i) {
+		for (size_t j = 0; j < mat.ColSize(); ++j) {
+			mat[i][j] = -mat[i][j];
+		}
+	}
+	return mat;
+}
+
 /**
  * Multiplication of two matrics.
  */

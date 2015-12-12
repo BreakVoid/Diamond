@@ -201,6 +201,44 @@ VectorT<_Td> operator-(const VectorT<_Td> v1, const VectorT<_Td> v2)
 }
 
 template<typename _Td>
+Vector<_Td> operator-(const Vector<_Td> &vec)
+{
+	Vector<_Td> result(vec.Size());
+	for (size_t i = 0; i < vec.Size(); ++i) {
+		result[i] = -vec[i];
+	}
+	return result;
+}
+
+template<typename _Td>
+Vector<_Td> operator-(Vector<_Td> &&vec)
+{
+	for (size_t i = 0; i < vec.Size(); ++i) {
+		vec[i] = -vec[i];
+	}
+	return vec;
+}
+
+template<typename _Td>
+VectorT<_Td> operator-(const VectorT<_Td> &vec)
+{
+	VectorT<_Td> result(vec.Size());
+	for (size_t i = 0; i < vec.Size(); ++i) {
+		result[i] = -vec[i];
+	}
+	return result;
+}
+
+template<typename _Td>
+VectorT<_Td> operator-(VectorT<_Td> &&vec)
+{
+	for (size_t i = 0; i < vec.Size(); ++i) {
+		vec[i] = -vec[i];
+	}
+	return vec;
+}
+
+template<typename _Td>
 Matrix<_Td> operator*(const Vector<_Td> &v, const VectorT<_Td> &vT)
 {
 	Matrix<_Td> c(v.Size(), vT.Size(), 0);
