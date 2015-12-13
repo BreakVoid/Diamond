@@ -263,6 +263,36 @@ _Td operator*(const VectorT<_Td> &vT, const Vector<_Td> &v)
 	return c;
 }
 
+template<typename _Td>
+Vector<_Td> operator*(const Matrix<_Td> &A, const Vector<_Td> &v)
+{
+	if (A.ColSize() != v.Size()) {
+		throw std::invalid_argument("The column size of matrix is different from the size of vector.");
+	}
+	Vector<_Td> result(A.RowSize(), 0);
+	for (size_t i = 0; i < A.RowSize(); ++i) {
+		for (size_t j = 0; j < A.ColSize(); ++j) {
+			result[i] += A[i][j] * v[j];
+		}
+	}
+	return result;
+}
+
+template<typename _Td>
+VectorT<_Td> operator*(const VectorT<_Td> &vT, const Matrix<_Td> &A)
+{
+	if (vT.Size() != A.RowSize()) {
+		throw std::invalid_argument("The row size of matrix is different from the size of the transpose vector.");
+	}
+	VectorT<_Td> result(A.ColSize(), 0);
+	for (size_t i = 0; i < A.ColSize(); ++i) {
+		for (size_t j = 0; j < A.RowSize(); ++j) {
+			result[i] += vT[j] * A[j][i];
+		}
+	}
+	return result;
+}
+
 }
 
 #endif

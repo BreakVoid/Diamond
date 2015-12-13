@@ -1,36 +1,38 @@
-#include "matrix.hpp"
-#include "vector.hpp"
-#include "util.hpp"
-#include "lu-decom.hpp"
-#include "optimization.hpp"
-
 #include <iostream>
+#include "matrix.hpp"
+#include "util.hpp"
+#include "vector.hpp"
+#include "optimization.hpp"
+#include "lu-decom.hpp"
 
 using namespace std;
 using namespace Diamond;
 
-Vector<long double> GenGradient(const Vector<long double> &x)
+template<typename _Td>
+Matrix<_Td> GeneratePositiveDefiniteMatrix(const size_t &n, const _Td &minValue = static_cast<_Td>(0), const _Td &maxValue = static_cast<_Td>(1))
 {
-	Vector<long double> result(2);
-	result[0] = x[0];
-	result[1] = 5.0 * x[1];
-	return result;
+	Matrix<_Td> res(n, n);
+	std::uniform_real_distribution<_Td> random(minValue, maxValue);
+	for (size_t i = 0; i < n; ++i) {
+		for (size_t j = 0; j < n; ++j) {
+			res[i][j] = random(engine);
+		}
+	}
+	return Transpose(res) * res;
 }
 
-long double F(const Vector<long double> &x)
-{
-	if (x.Size() != 2) {
-		throw std::invalid_argument("the number of arguments is incorrect.");
-	}
-	return 0.5 * x[0] * x[0] + 2.5 * x[1] * x[1];
-}
+const size_t nSize = 5;
 
 int main(int argc, char const *argv[])
 {
-	cout << "Conjugate Gradient Method test" << endl;
-	Vector<long double> x0(2);
-	x0[0] = 5;
-	x0[1] = 1;
-	cout << Optimization::ConjugateGradientMethod<long double>(2, F, GenGradient, x0);
+	Matrix<long double> A = GeneratePositiveDefiniteMatrix(nSize, -5.0L, 5.0L);
+	Vector<long double> b = GenerateRandomVector(nSize, -50.0L, 50.0L);
+
+	cout << LU::SolveLinearEquationSystem(A, b) << endl;
+	cout << Optimization::ConjugateGradientMethod<long double>(nSize, [&A, &b](const Vector<long double> &x) -> long double {
+		return 0.5L * Transpose(x) * A * x - Transpose(x) * b;
+	}, [&A, &b](const Vector<long double> &x) -> Vector<long double> {
+		return A * x - b;
+	}) << endl;
 	return 0;
 }

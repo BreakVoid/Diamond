@@ -67,12 +67,12 @@ _Tp GoldenSectionSearchHD(std::function<long double(const _Tp &)> f, const _Tp &
 }
 
 template<typename _Tp>
-Vector<_Tp> RandomGuessSolution(const size_t &sizeDimension, const int &randomTime, std::function<double(const Vector<_Tp> &)> Func)
+Vector<_Tp> RandomGuessSolution(const size_t &sizeDimension, const size_t &randomTime, std::function<_Tp(const Vector<_Tp> &)> Func)
 {
-	Vector<_Tp> bestVector = GenerateRandomVector(sizeDimension, -1e7, 1e7);
+	Vector<_Tp> bestVector = GenerateRandomVector(sizeDimension, static_cast<_Tp>(-1e5), static_cast<_Tp>(1e5));
 	double bestValue = Func(bestVector);
-	for (int i = 0; i < randomTime; ++i) {
-		Vector<_Tp> newVector = GenerateRandomVector(sizeDimension, -1e7, 1e7);
+	for (size_t i = 0; i < randomTime; ++i) {
+		Vector<_Tp> newVector = GenerateRandomVector(sizeDimension, static_cast<_Tp>(-1e5), static_cast<_Tp>(1e5));
 		double newValue = Func(newVector);
 		if (newValue < bestValue) {
 			bestVector = newVector;
@@ -85,15 +85,15 @@ Vector<_Tp> RandomGuessSolution(const size_t &sizeDimension, const int &randomTi
 template<typename _Tp>
 Vector<_Tp> ConjugateGradientMethod(
 	const size_t &sizeDimension,
-	std::function<double(const Vector<_Tp> &)> Func, // a function f: _Tp^n --> double
+	std::function<_Tp(const Vector<_Tp> &)> Func, // a function f: _Tp^n --> double
 	std::function<Vector<_Tp>(const Vector<_Tp> &)> Gradient // a function to calculate the gradient of f
 	)
 {
-	Vector<_Tp> x = RandomGuessSolution(sizeDimension, 10 * sizeDimension, Func);
+	Vector<_Tp> x = RandomGuessSolution<_Tp>(sizeDimension, 10 * sizeDimension, Func);
 	Vector<_Tp> g = Gradient(x);
 	Vector<_Tp> s = -g;
 	while (true) {
-		Vector<_Tp> newX = GoldenSectionSearch<Vector<_Tp>>(Func, x, s);
+		Vector<_Tp> newX = GoldenSectionSearchHD<Vector<_Tp>>(Func, x, s);
 		if (EqualZero(Func(x) - Func(newX))) {
 			return newX;
 		}
@@ -109,26 +109,21 @@ Vector<_Tp> ConjugateGradientMethod(
 template<typename _Tp>
 Vector<_Tp> ConjugateGradientMethod(
 	const size_t &sizeDimension,
-	std::function<double(const Vector<_Tp> &)> Func, // a function f: _Tp^n --> double
+	std::function<long double(const Vector<_Tp> &)> Func, // a function f: _Tp^n --> double
 	std::function<Vector<_Tp>(const Vector<_Tp> &)> Gradient, // a function to calculate the gradient of f
 	const Vector<_Tp> &firstSolution
 	)
 {
 	Vector<_Tp> x = firstSolution;
 	Vector<_Tp> g = Gradient(x);
-	cerr << g << endl;
 	Vector<_Tp> s = -g;
-	cerr << s << endl;
 	while (true) {
 		Vector<_Tp> newX = GoldenSectionSearchHD<Vector<_Tp>>(Func, x, s);
-		cerr << newX - x << endl;
 		if (EqualZero(Func(x) - Func(newX))) {
 			return newX;
 		}
 		Vector<_Tp> newG = Gradient(newX);
-		cerr << newG << endl;
 		_Tp beta = (Transpose(newG) * newG) / (Transpose(g) * g);
-		cerr << beta << endl;
 		s = -newG + beta * s;
 		g = newG;
 		x = newX;
