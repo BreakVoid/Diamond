@@ -176,9 +176,9 @@ Vector<_Td> operator*(const Vector<_Td> &lhs, const _Td &rhs)
 }
 
 template<typename _Td>
-Vector<_Td> operator*(const _Td &hs, const Vector<_Td> &rhs)
+Vector<_Td> operator*(const _Td &lhs, const Vector<_Td> &rhs)
 {
-	Vector<_Td> result(lhs.Size());
+	Vector<_Td> result(rhs.Size());
 	for (size_t i = 0; i < result.Size(); ++i) {
 		result[i] = lhs * rhs[i];
 	}
@@ -321,9 +321,9 @@ VectorT<_Td> operator*(const VectorT<_Td> &lhs, const _Td &rhs)
 }
 
 template<typename _Td>
-VectorT<_Td> operator*(const _Td &hs, const VectorT<_Td> &rhs)
+VectorT<_Td> operator*(const _Td &lhs, const VectorT<_Td> &rhs)
 {
-	VectorT<_Td> result(lhs.Size());
+	VectorT<_Td> result(rhs.Size());
 	for (size_t i = 0; i < result.Size(); ++i) {
 		result[i] = lhs * rhs[i];
 	}
