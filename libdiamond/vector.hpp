@@ -113,7 +113,7 @@ public:
 
 		stream << '\n';
 		for (size_t i = 0; i < vec.Size(); ++i) {
-			stream << setw(15) << vec[i] << '\n';
+			stream << std::setw(15) << vec[i] << '\n';
 		}
 		stream.flags(oldFlags);
 		return stream;
@@ -257,7 +257,7 @@ public:
 
 		stream << '\n';
 		for (size_t i = 0; i < vec.Size(); ++i) {
-			stream << setw(15) << vec[i];
+			stream << std::setw(15) << vec[i];
 		}
 		stream << '\n';
 		stream.flags(oldFlags);
