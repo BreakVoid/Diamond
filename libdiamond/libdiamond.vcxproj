@@ -142,12 +142,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="colvector.hpp" />
     <ClInclude Include="lu-decom.hpp" />
     <ClInclude Include="matrix.hpp" />
     <ClInclude Include="optimization.hpp" />
     <ClInclude Include="qr-decom.hpp" />
+    <ClInclude Include="rowvector.hpp" />
     <ClInclude Include="util.hpp" />
     <ClInclude Include="vector.hpp" />
+    <ClInclude Include="vectorbase.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="matrix-test.cc" />

@@ -38,5 +38,14 @@
     <ClInclude Include="optimization.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="vectorbase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rowvector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colvector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
