@@ -74,7 +74,7 @@ public:
 	{
 		return ConstRowProxy(this->data[Kth]);
 	}
-	~Matrix() {};
+	~Matrix() = default;
 };
 
 /**

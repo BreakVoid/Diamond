@@ -31,9 +31,9 @@ bool EqualZero(const std::complex<_Td> &x)
 }
 
 template<typename _Td>
-Vector<_Td> GenerateRandomVector(const size_t &n, const _Td &minValue = static_cast<_Td>(0), const _Td &maxValue = static_cast<_Td>(1))
+VectorBase<_Td> GenerateRandomVector(const size_t &n, const _Td &minValue = static_cast<_Td>(0), const _Td &maxValue = static_cast<_Td>(1))
 {
-	Vector<_Td> res(n);
+	VectorBase<_Td> res(n);
 	std::uniform_real_distribution<_Td> random(minValue, maxValue);
 	for (size_t i = 0; i < n; ++i) {
 		res[i] = random(engine);

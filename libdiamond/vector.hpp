@@ -5,206 +5,140 @@
 #include "matrix.hpp"
 
 namespace Diamond {
-
+/**
+ * Definition for vector base
+ */
 template<typename _Td>
-class Vector : public Matrix<_Td> {
+class VectorBase {
+protected:
+	size_t size;
+	std::vector<_Td> data;
 public:
-	Vector() : Matrix<_Td>::Matrix() {}
-	Vector(const size_t &_n_rows)
-		: Matrix<_Td>::Matrix(_n_rows, 1) {}
-	Vector(const size_t &_n_rows, const _Td &fillValue)
-		: Matrix<_Td>::Matrix(_n_rows, 1, fillValue) {}
-	explicit Vector(const Vector<_Td> &v)
-		: Matrix<_Td>::Matrix(v) {}
-	Vector(const Matrix<_Td> &mat)
-		: Matrix<_Td>::Matrix(mat)
+	size_t Size() const
 	{
-		if (mat.ColSize() != 1) {
-			throw std::invalid_argument("Cannot convert a matrix to a vector.");
-		}
+		return this->size;
 	}
-	inline const size_t & Size() const
+	const _Td & operator[](const size_t &pos) const
 	{
-		return this->RowSize();
+		return this->data[pos];
 	}
 	_Td & operator[](const size_t &pos)
 	{
-		return this->data[pos][0];
+		return this->data[pos];
 	}
-	const _Td & operator[](const size_t &pos) const
+	VectorBase() : size(0) {}
+	VectorBase(const size_t &_size, const _Td &initValue = static_cast<_Td>(0))
+		: size(_size), data(size, initValue)
+	{}
+	VectorBase(const VectorBase<_Td> &vec)
+		: size(vec.size), data(vec.data)
+	{}
+	VectorBase(VectorBase<_Td> &&vec)
+		: size(vec.size), data(vec.data)
+	{}
+	VectorBase<_Td> &operator=(const VectorBase<_Td> &rhs)
 	{
-		return this->data[pos][0];
+		this->size = rhs.size;
+		this->data = rhs.data;
+		return *this;
 	}
+	VectorBase<_Td> &operator=(VectorBase<_Td> &&rhs)
+	{
+		this->size = rhs.size;
+		this->data = rhs.data;
+		return *this;
+	}
+	virtual ~VectorBase() = default;
 };
 
+/**
+ * Definition for column vector
+ */
 template<typename _Td>
-class VectorT : public Matrix<_Td> {
+class Vector : public VectorBase<_Td> {
 public:
-	VectorT() : Matrix<_Td>::Matrix() {}
-	VectorT(const size_t &_n_cols)
-		: Matrix<_Td>::Matrix(1, _n_cols) {}
-	VectorT(const size_t &_n_cols, const _Td &fillValue)
-		: Matrix<_Td>::Matrix(1, _n_cols, fillValue) {}
-	explicit VectorT(const VectorT<_Td> &v)
-		: Matrix<_Td>::Matrix(v) {}
-	VectorT(const Matrix<_Td> &mat)
-		: Matrix<_Td>::Matrix(mat)
+	Vector() : VectorBase<_Td>::VectorBase() {}
+	Vector(const size_t &size, const _Td &initValue = static_cast<_Td>(0))
+		: VectorBase<_Td>::VectorBase(size, initValue)
+	{}
+	Vector(const VectorBase<_Td> &vec)
+		: VectorBase<_Td>::VectorBase(vec)
+	{}
+	Vector(VectorBase<_Td> &&vec)
+		: VectorBase<_Td>::VectorBase(vec)
+	{}
+	Vector(const Vector<_Td> &vec)
+		: VectorBase<_Td>::VectorBase(vec)
+	{}
+	Vector(Vector<_Td> &&vec)
+		: VectorBase<_Td>::VectorBase(vec)
+	{}
+	Vector(const Matrix<_Td> &mat)
+		: VectorBase<_Td>::VectorBase(mat.RowSize())
 	{
-		if (mat.RowSize() != 1) {
-			throw std::invalid_argument("Cannot convert a matrix to a vector.");
+		if (mat.ColSize() != 1) {
+			throw std::invalid_argument("the matrix cannot be converted to a vector.");
+		}
+		for (size_t i = 0; i < this->size; ++i) {
+			this->data[i] = mat[i][0];
 		}
 	}
-	inline const size_t & Size() const
+	Vector(Matrix<_Td> &&mat)
+		: VectorBase<_Td>::VectorBase(mat.RowSize())
 	{
-		return this->ColSize();
+		if (mat.ColSize() != 1) {
+			throw std::invalid_argument("the matrix cannot be converted to a vector.");
+		}
+		for (size_t i = 0; i < this->size; ++i) {
+			this->data[i] = mat[i][0];
+		}
 	}
-	_Td & operator[](const size_t pos)
+	friend std::ostream & operator<<(std::ostream &stream, const Vector<_Td> &vec)
 	{
-		return this->data[0][pos];
-	}
-	const _Td & operator[](const size_t &pos) const
-	{
-		return this->data[0][pos];
+		std::ostream::fmtflags oldFlags = stream.flags();
+		stream.precision(8);
+		stream.setf(std::ios::fixed | std::ios::right);
+
+		stream << '\n';
+		for (size_t i = 0; i < vec.Size(); ++i) {
+			stream << setw(15) << vec[i] << '\n';
+		}
+		stream.flags(oldFlags);
+		return stream;
 	}
 };
 
 template<typename _Td>
-Vector<_Td> Transpose(const VectorT<_Td> &vT)
+Vector<_Td> operator+(const Vector<_Td> &lhs, const Vector<_Td> &rhs)
 {
-	Vector<_Td> res(vT.Size());
-	for (size_t i = 0; i < vT.Size(); ++i) {
-		res[i] = vT[i];
+	if (lhs.Size() != rhs.Size()) {
+		throw std::invalid_argument("the sizes of two vectors cannot match.");
 	}
-	return res;
+	Vector<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs[i] + rhs[i];
+	}
+	return result;
 }
 
 template<typename _Td>
-VectorT<_Td> Transpose(const Vector<_Td> &v)
+Vector<_Td> operator-(const Vector<_Td> &lhs, const Vector<_Td> &rhs)
 {
-	VectorT<_Td> res(v.Size());
-	for (size_t i = 0; i < v.Size(); ++i) {
-		res[i] = v[i];
+	if (lhs.Size() != rhs.Size()) {
+		throw std::invalid_argument("the sizes of two vectors cannot match.");
 	}
-	return res;
-}
-
-template<typename _Td>
-Vector<_Td> operator*(const _Td &b, const Vector<_Td> v)
-{
-	Vector<_Td> res(v);
-	for (size_t i = 0; i < v.Size(); ++i) {
-		res[i] = b * v[i];
+	Vector<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs[i] - rhs[i];
 	}
-	return res;
-}
-
-template<typename _Td>
-Vector<_Td> operator*(const Vector<_Td> v, const _Td &b)
-{
-	Vector<_Td> res(v);
-	for (size_t i = 0; i < v.Size(); ++i) {
-		res[i] = b * v[i];
-	}
-	return res;
-}
-
-template<typename _Td>
-Vector<_Td> operator/(const Vector<_Td> v, const _Td &b)
-{
-	Vector<_Td> res(v);
-	for (size_t i = 0; i < v.Size(); ++i) {
-		res[i] = v[i] / b;
-	}
-	return res;
-}
-
-template<typename _Td>
-Vector<_Td> operator+(const Vector<_Td> v1, const Vector<_Td> v2)
-{
-	if (v1.Size() != v2.Size()) {
-		throw std::invalid_argument("different vector size.");
-	}
-	Vector<_Td> res(v1.Size());
-	for (size_t i = 0; i < v1.Size(); ++i) {
-		res[i] = v1[i] + v2[i];
-	}
-	return res;
-}
-
-template<typename _Td>
-Vector<_Td> operator-(const Vector<_Td> v1, const Vector<_Td> v2)
-{
-	if (v1.Size() != v2.Size()) {
-		throw std::invalid_argument("different vector size.");
-	}
-	Vector<_Td> res(v1.Size());
-	for (size_t i = 0; i < v1.Size(); ++i) {
-		res[i] = v1[i] - v2[i];
-	}
-	return res;
-}
-
-template<typename _Td>
-VectorT<_Td> operator*(const _Td &b, const VectorT<_Td> v)
-{
-	VectorT<_Td> res(v);
-	for (size_t i = 0; i < v.Size(); ++i) {
-		res[i] = b * v[i];
-	}
-	return res;
-}
-
-template<typename _Td>
-VectorT<_Td> operator*(const VectorT<_Td> v, const _Td &b)
-{
-	VectorT<_Td> res(v);
-	for (size_t i = 0; i < v.Size(); ++i) {
-		res[i] = b * v[i];
-	}
-	return res;
-}
-
-template<typename _Td>
-VectorT<_Td> operator/(const VectorT<_Td> v, const _Td &b)
-{
-	VectorT<_Td> res(v);
-	for (size_t i = 0; i < v.Size(); ++i) {
-		res[i] = v[i] / b;
-	}
-	return res;
-}
-
-template<typename _Td>
-VectorT<_Td> operator+(const VectorT<_Td> v1, const VectorT<_Td> v2)
-{
-	if (v1.Size() != v2.Size()) {
-		throw std::invalid_argument("different vector size.");
-	}
-	VectorT<_Td> res(v1.Size());
-	for (size_t i = 0; i < v1.Size(); ++i) {
-		res[i] = v1[i] + v2[i];
-	}
-	return res;
-}
-
-template<typename _Td>
-VectorT<_Td> operator-(const VectorT<_Td> v1, const VectorT<_Td> v2)
-{
-	if (v1.Size() != v2.Size()) {
-		throw std::invalid_argument("different vector size.");
-	}
-	VectorT<_Td> res(v1.Size());
-	for (size_t i = 0; i < v1.Size(); ++i) {
-		res[i] = v1[i] - v2[i];
-	}
-	return res;
+	return result;
 }
 
 template<typename _Td>
 Vector<_Td> operator-(const Vector<_Td> &vec)
 {
 	Vector<_Td> result(vec.Size());
-	for (size_t i = 0; i < vec.Size(); ++i) {
+	for (size_t i = 0; i < result.Size(); ++i) {
 		result[i] = -vec[i];
 	}
 	return result;
@@ -220,10 +154,124 @@ Vector<_Td> operator-(Vector<_Td> &&vec)
 }
 
 template<typename _Td>
+Vector<_Td> operator*(const Vector<_Td> &lhs, const _Td &rhs)
+{
+	Vector<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs[i] * rhs;
+	}
+	return result;
+}
+
+template<typename _Td>
+Vector<_Td> operator*(const _Td &hs, const Vector<_Td> &rhs)
+{
+	Vector<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs * rhs[i];
+	}
+	return result;
+}
+
+template<typename _Td>
+Vector<_Td> operator/(const Vector<_Td> &lhs, const _Td &rhs)
+{
+	Vector<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs[i] / rhs;
+	}
+	return result;
+}
+
+/**
+ * Definition for row vector
+ */
+template<typename _Td>
+class VectorT : public VectorBase<_Td> {
+public:
+	VectorT() : VectorBase<_Td>::VectorBase() {}
+	VectorT(const size_t &size, const _Td &initValue = static_cast<_Td>(0))
+		: VectorBase<_Td>::VectorBase(size, initValue)
+	{}
+	VectorT(const VectorBase<_Td> &vec)
+		: VectorBase<_Td>::VectorBase(vec)
+	{}
+	VectorT(VectorBase<_Td> &&vec)
+		: VectorBase<_Td>::VectorBase(vec)
+	{}
+	VectorT(const VectorT<_Td> &vec)
+		: VectorBase<_Td>::VectorBase(vec)
+	{}
+	VectorT(VectorT<_Td> &&vec)
+		: VectorBase<_Td>::VectorBase(vec)
+	{}
+	VectorT(const Matrix<_Td> &mat)
+		: VectorBase<_Td>::VectorBase(mat.ColSize())
+	{
+		if (mat.RowSize() != 1) {
+			throw std::invalid_argument("the matrix cannot be converted to a vector.");
+		}
+		for (size_t i = 0; i < this->size; ++i) {
+			this->data[i] = mat[0][i];
+		}
+	}
+	VectorT(Matrix<_Td> &&mat)
+		: VectorBase<_Td>::VectorBase(mat.RowSize())
+	{
+		if (mat.ColSize() != 1) {
+			throw std::invalid_argument("the matrix cannot be converted to a vector.");
+		}
+		for (size_t i = 0; i < this->size; ++i) {
+			this->data[i] = mat[i][0];
+		}
+	}
+	friend std::ostream & operator<<(std::ostream &stream, const VectorT<_Td> &vec)
+	{
+		std::ostream::fmtflags oldFlags = stream.flags();
+		stream.precision(8);
+		stream.setf(std::ios::fixed | std::ios::right);
+
+		stream << '\n';
+		for (size_t i = 0; i < vec.Size(); ++i) {
+			stream << setw(15) << vec[i];
+		}
+		stream << '\n';
+		stream.flags(oldFlags);
+		return stream;
+	}
+};
+
+template<typename _Td>
+VectorT<_Td> operator+(const VectorT<_Td> &lhs, const VectorT<_Td> &rhs)
+{
+	if (lhs.Size() != rhs.Size()) {
+		throw std::invalid_argument("the sizes of two vectors cannot match.");
+	}
+	VectorT<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs[i] + rhs[i];
+	}
+	return result;
+}
+
+template<typename _Td>
+VectorT<_Td> operator-(const VectorT<_Td> &lhs, const VectorT<_Td> &rhs)
+{
+	if (lhs.Size() != rhs.Size()) {
+		throw std::invalid_argument("the sizes of two vectors cannot match.");
+	}
+	VectorT<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs[i] - rhs[i];
+	}
+	return result;
+}
+
+template<typename _Td>
 VectorT<_Td> operator-(const VectorT<_Td> &vec)
 {
 	VectorT<_Td> result(vec.Size());
-	for (size_t i = 0; i < vec.Size(); ++i) {
+	for (size_t i = 0; i < result.Size(); ++i) {
 		result[i] = -vec[i];
 	}
 	return result;
@@ -239,30 +287,74 @@ VectorT<_Td> operator-(VectorT<_Td> &&vec)
 }
 
 template<typename _Td>
-Matrix<_Td> operator*(const Vector<_Td> &v, const VectorT<_Td> &vT)
+VectorT<_Td> operator*(const VectorT<_Td> &lhs, const _Td &rhs)
 {
-	Matrix<_Td> c(v.Size(), vT.Size(), 0);
-	for (size_t i = 0; i < v.Size(); ++i) {
-		for (size_t j = 0; j < vT.Size(); ++j) {
-			c[i][j] = v[i] * vT[j];
-		}
+	VectorT<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs[i] * rhs;
 	}
-	return c;
+	return result;
 }
 
 template<typename _Td>
-_Td operator*(const VectorT<_Td> &vT, const Vector<_Td> &v)
+VectorT<_Td> operator*(const _Td &hs, const VectorT<_Td> &rhs)
 {
-	if (vT.Size() != v.Size()) {
-		throw std::invalid_argument("different vector size.");
+	VectorT<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs * rhs[i];
 	}
-	_Td c = 0;
-	for (size_t i = 0; i < vT.Size(); ++i) {
-		c += vT[i] * v[i];
-	}
-	return c;
+	return result;
 }
 
+template<typename _Td>
+VectorT<_Td> operator/(const VectorT<_Td> &lhs, const _Td &rhs)
+{
+	VectorT<_Td> result(lhs.Size());
+	for (size_t i = 0; i < result.Size(); ++i) {
+		result[i] = lhs[i] / rhs;
+	}
+	return result;
+}
+
+/**
+ * the transpose of vectors
+ */
+
+template<typename _Td>
+Vector<_Td> Transpose(const VectorT<_Td> &vT)
+{
+	Vector<_Td> res(vT.Size());
+	for (size_t i = 0; i < vT.Size(); ++i) {
+		res[i] = vT[i];
+	}
+	return res;
+}
+
+template<typename _Td>
+Vector<_Td> Transpose(VectorT<_Td> &&vT)
+{
+	return Vector<_Td>(VectorBase<_Td>(vT));
+}
+
+template<typename _Td>
+VectorT<_Td> Transpose(const Vector<_Td> &v)
+{
+	VectorT<_Td> res(v.Size());
+	for (size_t i = 0; i < v.Size(); ++i) {
+		res[i] = v[i];
+	}
+	return res;
+}
+
+template<typename _Td>
+VectorT<_Td> Transpose(Vector<_Td> &&v)
+{
+	return VectorT<_Td>(VectorBase<_Td>(v));
+}
+
+/**
+ * Multiplication between vector and matrix
+ */
 template<typename _Td>
 Vector<_Td> operator*(const Matrix<_Td> &A, const Vector<_Td> &v)
 {
@@ -293,6 +385,33 @@ VectorT<_Td> operator*(const VectorT<_Td> &vT, const Matrix<_Td> &A)
 	return result;
 }
 
+/**
+ * Multiplication between column vector and row vector
+ */
+template<typename _Td>
+Matrix<_Td> operator*(const Vector<_Td> &v, const VectorT<_Td> &vT)
+{
+	Matrix<_Td> c(v.Size(), vT.Size(), 0);
+	for (size_t i = 0; i < v.Size(); ++i) {
+		for (size_t j = 0; j < vT.Size(); ++j) {
+			c[i][j] = v[i] * vT[j];
+		}
+	}
+	return c;
+}
+
+template<typename _Td>
+_Td operator*(const VectorT<_Td> &vT, const Vector<_Td> &v)
+{
+	if (vT.Size() != v.Size()) {
+		throw std::invalid_argument("different vector size.");
+	}
+	_Td c = 0;
+	for (size_t i = 0; i < vT.Size(); ++i) {
+		c += vT[i] * v[i];
+	}
+	return c;
+}
 }
 
 #endif
