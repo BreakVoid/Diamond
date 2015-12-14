@@ -93,6 +93,18 @@ public:
 			this->data[i] = mat[i][0];
 		}
 	}
+	Vector<_Td> & operator=(const Vector<_Td> &rhs)
+	{
+		this->data = rhs.data;
+		this->size = rhs.size;
+		return *this;
+	}
+	Vector<_Td> & operator=(Vector<_Td> &&rhs)
+	{
+		this->data = rhs.data;
+		this->size = rhs.size;
+		return *this;
+	}
 	friend std::ostream & operator<<(std::ostream &stream, const Vector<_Td> &vec)
 	{
 		std::ostream::fmtflags oldFlags = stream.flags();
@@ -224,6 +236,18 @@ public:
 		for (size_t i = 0; i < this->size; ++i) {
 			this->data[i] = mat[i][0];
 		}
+	}
+	VectorT<_Td> & operator=(const VectorT<_Td> &rhs)
+	{
+		this->data = rhs.data;
+		this->size = rhs.size;
+		return *this;
+	}
+	VectorT<_Td> & operator=(VectorT<_Td> &&rhs)
+	{
+		this->data = rhs.data;
+		this->size = rhs.size;
+		return *this;
 	}
 	friend std::ostream & operator<<(std::ostream &stream, const VectorT<_Td> &vec)
 	{
