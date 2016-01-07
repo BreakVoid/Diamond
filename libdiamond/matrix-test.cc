@@ -43,23 +43,5 @@ void SaveSolution(const Matrix<long double> &A, const Vector<long double> &b, co
 
 int main(int argc, char const *argv[])
 {
-	while (true) {
-		Matrix<long double> A = GeneratePositiveDefiniteMatrix(nSize, -5.0L, 5.0L);
-		Vector<long double> b = GenerateRandomVector(nSize, -50.0L, 50.0L);
-		auto x = LU::SolveLinearEquationSystem(A, b);
-		auto y = Optimization::ConjugateGradientMethod<long double>(nSize, [&A, &b](const Vector<long double> &x) -> long double {
-			return 0.5L * Transpose(x) * A * x - Transpose(x) * b;
-		}, [&A, &b](const Vector<long double> &x) -> Vector<long double> {
-			return A * x - b;
-		});
-		cout << x << endl;
-		cout << y << endl;
-		cout << "Do you want to save this case?(y/n): ";
-		string s;
-		cin >> s;
-		if (s == "y") {
-			SaveSolution(A, b, x, y);
-		}
-	}
 	return 0;
 }

@@ -233,6 +233,23 @@ Matrix<_Td> I(const size_t &n)
 	return res;
 }
 
+template<typename _Td>
+Matrix<_Td> Pow(Matrix<_Td> A, size_t &b)
+{
+	if (A.RowSize() != A.ColSize()) {
+		throw std::invalid_argument("The row size and column size are different.");
+	}
+	Matrix<_Td> result = I<_Td>(A.ColSize());
+	while (b > 0) {
+		if (b & static_cast<size_t>(1)) {
+			result = result * A;
+		}
+		A = A * A;
+		b = b >> static_cast<size_t>(1);
+	}
+	return result;
+}
+
 }
 #endif
 

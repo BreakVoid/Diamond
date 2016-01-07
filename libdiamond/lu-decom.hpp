@@ -133,12 +133,12 @@ Vector<_Td> SolveUpperTriangleSystem(const Matrix<_Td> &a, const Vector<_Td> &b)
 	}
 	const auto n = a.RowSize();
 	Vector<_Td> res(n);
-	for (int i = n - 1; i >= 0; --i) {
+	for (size_t i = n; i > 0; --i) {
 		_Td sum = 0;
-		for (int j = n - 1; j > i; --j) {
-			sum += a[i][j] * res[j];
+		for (size_t j = n; j > i; --j) {
+			sum += a[i - 1][j - 1] * res[j - 1];
 		}
-		res[i] = (b[i] - sum) / a[i][i];
+		res[i - 1] = (b[i - 1] - sum) / a[i - 1][i - 1];
 	}
 	return res;
 }
@@ -151,7 +151,6 @@ Vector<_Td> SolveLinearEquationSystem(const Matrix<_Td> &a, const Vector<_Td> &b
 	const auto x = SolveUpperTriangleSystem(luRes.first.second, y);
 	return Transpose(luRes.second) * x;
 }
-
 
 }
 }
