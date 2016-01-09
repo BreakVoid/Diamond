@@ -149,7 +149,7 @@ Vector<_Td> SolveLinearEquationSystem(const Matrix<_Td> &a, const Vector<_Td> &b
 	const auto luRes = LU_DecompositionPivoting(a);
 	const auto y = SolveLowerTriangleSystem(luRes.first.first, b);
 	const auto x = SolveUpperTriangleSystem(luRes.first.second, y);
-	return Transpose(luRes.second) * x;
+	return luRes.second * x;
 }
 
 }
