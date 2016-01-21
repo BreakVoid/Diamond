@@ -5,7 +5,11 @@
 #include "matrix.hpp"
 #include "vector.hpp"
 #include "util.hpp"
+
 #include <map>
+#include <functional>
+#include <algorithm>
+#include <cmath>
 
 namespace Diamond {
 namespace LU {
@@ -67,7 +71,7 @@ std::pair<std::pair<Matrix<_Td>, Matrix<_Td>>, Matrix<_Td>> LU_DecompositionPivo
 	for (size_t k = 0; k < n; ++k) {
 		size_t maxColumn = k;
 		for (size_t i = k + 1; i < n; ++i) {
-			if (abs(beta[k][i]) > abs(beta[k][maxColumn])) {
+			if (std::abs(beta[k][i]) > std::abs(beta[k][maxColumn])) {
 				maxColumn = i;
 			}
 		}

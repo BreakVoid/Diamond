@@ -5,6 +5,7 @@
 #include "vectorbase.hpp"
 #include "rowvector.hpp"
 #include "colvector.hpp"
+#include <cmath>
 
 namespace Diamond {
 
@@ -103,6 +104,19 @@ _Td operator*(const VectorT<_Td> &vT, const Vector<_Td> &v)
 		c += vT[i] * v[i];
 	}
 	return c;
+}
+
+template<typename _Td>
+_Td Norm(const VectorBase<_Td> &v, const int &order = 2)
+{
+	if (order <= 0) {
+		throw std::invalid_argument("The order of norm should be greater than 0.");
+	}
+	_Td result = static_cast<_Td>(0);
+	for (size_t i = 0; i < v.Size(); ++i) {
+		result += pow(v[i], order);
+	}
+	return pow(result, static_cast<_Td>(1.0) / order);
 }
 
 }
