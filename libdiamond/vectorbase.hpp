@@ -31,6 +31,12 @@ public:
 	VectorBase(const size_t &_size, const _Td &initValue = static_cast<_Td>(0))
 		: size(_size), data(size, initValue)
 	{}
+	VectorBase(const std::vector<_Td> &content)
+		: size(content.size()), data(content)
+	{}
+	VectorBase(std::vector<_Td> &&content)
+		: size(content.size()), data(content)
+	{}
 	VectorBase(const VectorBase<_Td> &vec)
 		: size(vec.size), data(vec.data)
 	{}

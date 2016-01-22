@@ -16,6 +16,12 @@ public:
 	VectorT(const size_t &size, const _Td &initValue = static_cast<_Td>(0))
 		: VectorBase<_Td>::VectorBase(size, initValue)
 	{}
+	VectorT(const std::vector<_Td> &content)
+		: VectorBase<_Td>::VectorBase(content)
+	{}
+	VectorT(std::vector<_Td> &&content)
+		: VectorBase<_Td>::VectorBase(content)
+	{}
 	VectorT(const VectorBase<_Td> &vec)
 		: VectorBase<_Td>::VectorBase(vec)
 	{}
