@@ -34,7 +34,17 @@ public:
 	{}
 	Polynomial(Polynomial<_Td> &&polynomial) : c(polynomial.c)
 	{}
-	void Trim()
+	Polynomial<_Td> Trimed() const
+	{
+		size_t res = c.size();
+		while (res > 1 && EqualZero(c[res - 1])) {
+			--res;
+		}
+		auto cc = c;
+		cc.resize(res);
+		return Polynomial<_Td>(std::move(cc));
+	}
+	void trim()
 	{
 		size_t res = c.size();
 		while (res > 1 && EqualZero(c[res - 1])) {
@@ -114,8 +124,7 @@ public:
 		for (size_t i = 0; i < maxDeg + 1; ++i) {
 			res[i] = lhs[i] + rhs[i];
 		}
-		res.Trim();
-		return res;
+		return res.Trimed();
 	}
 	friend Polynomial<_Td> operator-(const Polynomial<_Td> &lhs, const Polynomial<_Td> &rhs)
 	{
@@ -124,8 +133,7 @@ public:
 		for (size_t i = 0; i < maxDeg + 1; ++i) {
 			res[i] = lhs[i] - rhs[i];
 		}
-		res.Trim();
-		return res;
+		return res.Trimed();
 	}
 	friend Polynomial<_Td> operator*(const Polynomial<_Td> &lhs, const Polynomial<_Td> &rhs)
 	{
@@ -137,7 +145,15 @@ public:
 				res[i + j] += lhs[i] * rhs[j];
 			}
 		}
-		res.Trim();
+		return res.Trimed();
+	}
+	friend Polynomial<_Td> operator/(const Polynomial<_Td> &lhs, const _Td &rhs)
+	{
+		Polynomial<_Td> res;
+		const auto deg = lhs.Deg();
+		for (size_t i = 0; i < deg + 1; ++i) {
+			res[i] = lhs[i] / rhs;
+		}
 		return res;
 	}
 };
