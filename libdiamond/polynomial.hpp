@@ -34,6 +34,16 @@ public:
 	{}
 	Polynomial(Polynomial<_Td> &&polynomial) : c(polynomial.c)
 	{}
+	Polynomial<_Td> & operator=(const Polynomial<_Td> &rhs)
+	{
+		this->c = rhs.c;
+		return *this;
+	}
+	Polynomial<_Td> & operator=(Polynomial<_Td> &&rhs)
+	{
+		this->c = rhs.c;
+		return *this;
+	}
 	Polynomial<_Td> Trimed() const
 	{
 		size_t res = c.size();
@@ -153,6 +163,43 @@ public:
 		const auto deg = lhs.Deg();
 		for (size_t i = 0; i < deg + 1; ++i) {
 			res[i] = lhs[i] / rhs;
+		}
+		return res;
+	}
+	friend Polynomial<_Td> pow(Polynomial<_Td> polynomial, size_t powTime)
+	{
+		Polynomial<_Td> res(static_cast<_Td>(1));
+		while (powTime) {
+			if (powTime & 1) {
+				res = res * polynomial;
+			}
+			polynomial = polynomial * polynomial;
+			powTime >>= 1;
+		}
+		return res;
+	}
+	friend Polynomial<_Td> Derivative(const Polynomial<_Td> &polynomial)
+	{
+		Polynomial<_Td> res;
+		const auto deg = polynomial.Deg();
+		for (size_t i = deg; i > 0; --i) {
+			res[i - 1] = polynomial[i] * i;
+		}
+		return res;
+	}
+	friend Polynomial<_Td> Derivative(Polynomial<_Td> &&polynomial)
+	{
+		const auto deg = polynomial.Deg();
+		for (size_t i = 0; i < deg; ++i) {
+			polynomial[i] = polynomial[i + 1] * (i + 1);
+		}
+		return polynomial.Trim();
+	}
+	friend Polynomial<_Td> Derivative(const Polynomial<_Td> &polynomial, const size_t &order)
+	{
+		Polynomial<_Td> res = polynomial;
+		for (size_t i = 0; i < order; ++i) {
+			res = Derivative(res);
 		}
 		return res;
 	}

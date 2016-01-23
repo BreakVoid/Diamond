@@ -10,6 +10,7 @@ int main(int argc, char const *argv[])
 	Polynomial<double> p1({1.0, 1.0});
 	Polynomial<double> p2({-1.0, 1.0});
 	cout << "--- Testing single polynomial ---" << endl;
+	cout << Polynomial<double>(0) << endl;
 	cout << p1 << endl;
 	cout << p2 << endl;
 	cout << "--- Testing addition ---" << endl;
