@@ -137,6 +137,20 @@ class Bspline {
 private:
 	std::vector<std::pair<_Td, _Td>> data;
 	Vector<_Td> coff;
+public:
+	size_t Index(const long long &i)
+	{
+		return 5 + i;
+	}
+	inline _Td T(const size_t &index)
+	{
+		return data[index].first;
+	}
+	inline _Td Y(const size_t &index)
+	{
+		return data[index].second;
+	}
+private:
 	inline _Td v(const long long &k, const long long &i, const _Td &t)
 	{
 		return (t - T(Index(i))) / (T(Index(i + k) - T(Index(i))));
@@ -145,13 +159,13 @@ private:
 	{
 		return Polynomial<_Td>({
 			static_cast<_Td>(1) / (T(Index(i + k)) - T(Index(i))),
-			- T(Index(i)) / (T(Index(i + k)) - T(Index(i)))
+			-T(Index(i)) / (T(Index(i + k)) - T(Index(i)))
 		});
 	}
 	_Td B(const long long &k, const long long &i, const _Td &t)
 	{
 		if (k == 0) {
-			if (T(Index(i)) <= t && t <= T(Index(i + 1))) {
+			if (T(Index(i)) <= t && t < T(Index(i + 1))) {
 				return static_cast<_Td>(1);
 			} else {
 				return static_cast<_Td>(0);
@@ -173,18 +187,6 @@ private:
 		}
 	}
 public:
-	size_t Index(const long long &i)
-	{
-		return 5 + i;
-	}
-	_Td T(const size_t &index)
-	{
-		return data[index].first;
-	}
-	_Td Y(const size_t &index)
-	{
-		return data[index].second;
-	}
 	Bspline(const std::vector<std::pair<_Td, _Td>> &origin) : data()
 	{
 		if (origin.size() <= 1) {
@@ -192,13 +194,13 @@ public:
 		}
 		const auto n = origin.size();
 		for (_Td i = static_cast<_Td>(-5); i < static_cast<_Td>(0); i += static_cast<_Td>(1)) {
-			data.push_back(std::make_pair((origin[1].first - origin[0].first) * i, static_cast<_Td>)(0));
+			data.push_back(std::make_pair((origin[1].first - origin[0].first) * i + origin[0].first, static_cast<_Td>(0)));
 		}
-		for (size_t i = 0; i < origin; ++i) {
+		for (size_t i = 0; i < origin.size(); ++i) {
 			data.push_back(origin[i]);
 		}
 		for (_Td i = static_cast<_Td>(1); i < static_cast<_Td>(4); i += static_cast<_Td>(1)) {
-			data.push_back(std::make_pair((origin[n - 1].first - origin[n - 2].first) * i, static_cast<_Td>(0)));
+			data.push_back(std::make_pair((origin[n - 1].first - origin[n - 2].first) * i + origin[n - 1].first, static_cast<_Td>(0)));
 		}
 		Matrix<_Td> A(n + 2, n + 2);
 		Vector<_Td> b(n + 2);
@@ -206,10 +208,28 @@ public:
 			A[i][i] = B(3, i - 3, T(Index(i)));
 			A[i][i + 1] = B(3, i - 2, T(Index(i)));
 			A[i][i + 2] = B(3, i - 1, T(Index(i)));
+			std::cerr << A[i][i] << '\t' << A[i][i + 1] << '\t' << A[i][i + 2] << std::endl;
 			b[i] = Y(Index(i));
 		}
-		A[n][0] = Derivate(B_Poly(3, -3, T(Index(0))))(T(Index(0)));
-		A[n][]
+		A[n][0] = Derivate(B_Poly(3, -3, T(Index(0))), 2)(T(Index(0)));
+		A[n][1] = Derivate(B_Poly(3, -2, T(Index(0))), 2)(T(Index(0)));
+		A[n][2] = Derivate(B_Poly(3, -1, T(Index(0))), 2)(T(Index(0)));
+		std::cerr << A[n][0] << '\t' << A[n][1] << '\t' << A[n][2] << '\t' << std::endl;
+		b[n] = 0;
+		A[n + 1][n - 1] = Derivate(B_Poly(3, n - 4, T(Index(n - 1))), 2)(T(Index(n - 1)));
+		A[n + 1][n] = Derivate(B_Poly(3, n - 3, T(Index(n - 1))), 2)(T(Index(n - 1)));
+		A[n + 1][n + 1] = Derivate(B_Poly(3, n - 2, T(Index(n - 1))), 2)(T(Index(n - 1)));
+		std::cerr << A[n + 1][n - 1] << '\t' << A[n + 1][n] << '\t' << A[n + 1][n + 1] << std::endl;
+		b[n + 1] = 0;
+		coff = LU::SolveLinearEquationSystem(A, b);
+	}
+	_Td y(const _Td &t)
+	{
+		_Td res = static_cast<_Td>(0);
+		for (size_t i = 0; i < coff.Size(); ++i) {
+			res += coff[i] * B(3, i - 3, t);
+		}
+		return res;
 	}
 };
 
