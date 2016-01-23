@@ -6,6 +6,7 @@
 #include "vector.hpp"
 #include "util.hpp"
 #include "lu-decom.hpp"
+#include "polynomial.hpp"
 
 #include <vector>
 #include <map>
@@ -97,6 +98,11 @@ std::vector<Vector<_Td>> shootingMethodOnce(const std::vector<std::pair<_Td, _Td
 	return result;
 }
 
+/**
+ * use shooting method to give a natural spline interpolation for the given data points.
+ * The spline funcitons used are all polynomials of the degree 3.
+ * If the input data has n data points, it will return n - 1 polynomials with 4-tuple.
+ */
 template<typename _Td>
 std::vector<std::vector<_Td>> NaturalSplineInterpolationEco(const std::vector<std::pair<_Td, _Td>> &data)
 {
@@ -123,7 +129,91 @@ std::vector<std::vector<_Td>> NaturalSplineInterpolationEco(const std::vector<st
 	return finalRes;
 }
 
-}
+/**
+ * a class to get Bspline interpolation.
+ */
+template<typename _Td>
+class Bspline {
+private:
+	std::vector<std::pair<_Td, _Td>> data;
+	Vector<_Td> coff;
+	inline _Td v(const long long &k, const long long &i, const _Td &t)
+	{
+		return (t - T(Index(i))) / (T(Index(i + k) - T(Index(i))));
+	}
+	inline Polynomial<_Td> v(const long long &k, const long long &i)
+	{
+		return Polynomial<_Td>({
+			static_cast<_Td>(1) / (T(Index(i + k)) - T(Index(i))),
+			- T(Index(i)) / (T(Index(i + k)) - T(Index(i)))
+		});
+	}
+	_Td B(const long long &k, const long long &i, const _Td &t)
+	{
+		if (k == 0) {
+			if (T(Index(i)) <= t && t <= T(Index(i + 1))) {
+				return static_cast<_Td>(1);
+			} else {
+				return static_cast<_Td>(0);
+			}
+		} else {
+			return v(k, i, t) * B(k - 1, i, t) + (1 - v(k, i + 1, t)) * B(k - 1, i + 1, t);
+		}
+	}
+	Polynomial<_Td> B_Poly(const long long &k, const long long &i, const _Td &t)
+	{
+		if (k == 0) {
+			if (T(Index(i)) <= t && t <= T(Index(i + 1))) {
+				return Polynomial<_Td>(1);
+			} else {
+				return Polynomial<_Td>(0);
+			}
+		} else {
+			return v(k, i) * B_Poly(k - 1, i, t) + (1 - v(k, i + 1)) * B_Poly(k - 1, i + 1, t);
+		}
+	}
+public:
+	size_t Index(const long long &i)
+	{
+		return 5 + i;
+	}
+	_Td T(const size_t &index)
+	{
+		return data[index].first;
+	}
+	_Td Y(const size_t &index)
+	{
+		return data[index].second;
+	}
+	Bspline(const std::vector<std::pair<_Td, _Td>> &origin) : data()
+	{
+		if (origin.size() <= 1) {
+			throw std::invalid_argument("Need more data points to make an interpolation.");
+		}
+		const auto n = origin.size();
+		for (_Td i = static_cast<_Td>(-5); i < static_cast<_Td>(0); i += static_cast<_Td>(1)) {
+			data.push_back(std::make_pair((origin[1].first - origin[0].first) * i, static_cast<_Td>)(0));
+		}
+		for (size_t i = 0; i < origin; ++i) {
+			data.push_back(origin[i]);
+		}
+		for (_Td i = static_cast<_Td>(1); i < static_cast<_Td>(4); i += static_cast<_Td>(1)) {
+			data.push_back(std::make_pair((origin[n - 1].first - origin[n - 2].first) * i, static_cast<_Td>(0)));
+		}
+		Matrix<_Td> A(n + 2, n + 2);
+		Vector<_Td> b(n + 2);
+		for (size_t i = 0; i < n; ++i) {
+			A[i][i] = B(3, i - 3, T(Index(i)));
+			A[i][i + 1] = B(3, i - 2, T(Index(i)));
+			A[i][i + 2] = B(3, i - 1, T(Index(i)));
+			b[i] = Y(Index(i));
+		}
+		A[n][0] = Derivate(B_Poly(3, -3, T(Index(0))))(T(Index(0)));
+		A[n][]
+	}
+};
+
+};
 }
 
 #endif /* end of DIAMOND_INTERPOLATION_HPP */

@@ -69,7 +69,7 @@ public:
 			--res;
 		}
 		c.resize(res);
-		return res - 1;
+		return res == 0 ? 0 : res - 1;
 	}
 	size_t Deg() const
 	{
@@ -77,7 +77,7 @@ public:
 		while (res > 1 && EqualZero(c[res - 1])) {
 			--res;
 		}
-		return res - 1;
+		return res == 0 ? 0 : res - 1;
 	}
 	_Td & operator[](const size_t &pos)
 	{
@@ -90,10 +90,10 @@ public:
 	{
 		if (pos >= c.size()) {
 			return static_cast<const _Td>(0);
-		}
+		}	
 		return c[pos];
 	}
-	_Td & operator()(const _Td &x) const
+	_Td operator()(const _Td &x) const
 	{
 		_Td res = static_cast<_Td>(0);
 		_Td powX = static_cast<_Td>(1);
@@ -106,6 +106,11 @@ public:
 	friend std::ostream &operator<<(std::ostream &stream, const Polynomial<_Td> &polynomial)
 	{
 		size_t deg = polynomial.Deg();
+		// std::cerr << deg << std::endl;
+		if (deg == 0 && EqualZero(polynomial[0])) {
+			stream << static_cast<_Td>(0);
+			return stream;
+		}
 		// std::cerr << deg << std::endl;
 		for (size_t i = deg + 1; i > 0; --i) {
 			if (EqualZero(polynomial[i - 1])) {
@@ -178,7 +183,7 @@ public:
 		}
 		return res;
 	}
-	friend Polynomial<_Td> Derivative(const Polynomial<_Td> &polynomial)
+	friend Polynomial<_Td> Derivate(const Polynomial<_Td> &polynomial)
 	{
 		Polynomial<_Td> res;
 		const auto deg = polynomial.Deg();
@@ -187,7 +192,7 @@ public:
 		}
 		return res;
 	}
-	friend Polynomial<_Td> Derivative(Polynomial<_Td> &&polynomial)
+	friend Polynomial<_Td> Derivate(Polynomial<_Td> &&polynomial)
 	{
 		const auto deg = polynomial.Deg();
 		for (size_t i = 0; i < deg; ++i) {
@@ -195,11 +200,11 @@ public:
 		}
 		return polynomial.Trim();
 	}
-	friend Polynomial<_Td> Derivative(const Polynomial<_Td> &polynomial, const size_t &order)
+	friend Polynomial<_Td> Derivate(const Polynomial<_Td> &polynomial, const size_t &order)
 	{
 		Polynomial<_Td> res = polynomial;
 		for (size_t i = 0; i < order; ++i) {
-			res = Derivative(res);
+			res = Derivate(res);
 		}
 		return res;
 	}

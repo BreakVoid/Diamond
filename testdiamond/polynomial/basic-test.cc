@@ -25,5 +25,8 @@ int main(int argc, char const *argv[])
 	cout << p1 * p2 << endl;
 	cout << 5 * p1 << endl;
 	cout << p2 * 8 << endl;
+	cout << "--- Testing getting value ---" << endl;
+	cout << p1(5) << endl;
+	cout << p2(6) << endl; 
 	return 0;
 }
