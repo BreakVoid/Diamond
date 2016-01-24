@@ -42,6 +42,12 @@
     <ClInclude Include="colvector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="polynomial.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="interpolation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cc">

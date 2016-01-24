@@ -20,8 +20,10 @@ int main(int argc, char const *argv[])
 		data.push_back(make_pair(t, y));
 	}
 	auto bspline = Interpolation::Bspline<double>(data);
-	// for (double t = -1; t <= 1.0; t += 1e-3) {
-	// 	cout << t << '\t' << bspline.y(t) << endl;
-	// }
+	ofstream plotData("plot-data");
+	for (double t = -1; t <= 1.0; t += 1e-3) {
+		plotData << t << '\t' << bspline.y(t) << endl;
+	}
+	plotData << endl;
 	return 0;
 }

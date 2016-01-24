@@ -140,20 +140,23 @@ private:
 public:
 	size_t Index(const long long &i)
 	{
+		if (i < -5) {
+			throw std::invalid_argument("Internal Error.");
+		}
 		return 5 + i;
 	}
-	inline _Td T(const size_t &index)
+	_Td T(const size_t &index)
 	{
 		return data[index].first;
 	}
-	inline _Td Y(const size_t &index)
+	_Td Y(const size_t &index)
 	{
 		return data[index].second;
 	}
 private:
 	inline _Td v(const long long &k, const long long &i, const _Td &t)
 	{
-		return (t - T(Index(i))) / (T(Index(i + k) - T(Index(i))));
+		return (t - T(Index(i))) / (T(Index(i + k)) - T(Index(i)));
 	}
 	inline Polynomial<_Td> v(const long long &k, const long long &i)
 	{
@@ -208,18 +211,15 @@ public:
 			A[i][i] = B(3, i - 3, T(Index(i)));
 			A[i][i + 1] = B(3, i - 2, T(Index(i)));
 			A[i][i + 2] = B(3, i - 1, T(Index(i)));
-			std::cerr << A[i][i] << '\t' << A[i][i + 1] << '\t' << A[i][i + 2] << std::endl;
 			b[i] = Y(Index(i));
 		}
 		A[n][0] = Derivate(B_Poly(3, -3, T(Index(0))), 2)(T(Index(0)));
 		A[n][1] = Derivate(B_Poly(3, -2, T(Index(0))), 2)(T(Index(0)));
 		A[n][2] = Derivate(B_Poly(3, -1, T(Index(0))), 2)(T(Index(0)));
-		std::cerr << A[n][0] << '\t' << A[n][1] << '\t' << A[n][2] << '\t' << std::endl;
 		b[n] = 0;
 		A[n + 1][n - 1] = Derivate(B_Poly(3, n - 4, T(Index(n - 1))), 2)(T(Index(n - 1)));
 		A[n + 1][n] = Derivate(B_Poly(3, n - 3, T(Index(n - 1))), 2)(T(Index(n - 1)));
 		A[n + 1][n + 1] = Derivate(B_Poly(3, n - 2, T(Index(n - 1))), 2)(T(Index(n - 1)));
-		std::cerr << A[n + 1][n - 1] << '\t' << A[n + 1][n] << '\t' << A[n + 1][n + 1] << std::endl;
 		b[n + 1] = 0;
 		coff = LU::SolveLinearEquationSystem(A, b);
 	}
